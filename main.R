@@ -3,13 +3,7 @@ library(tm)  # make sure to load this prior to openNLP
 library(openNLP)
 library(openNLPdata)
 library(stringr)
-
-# load corpus data
-#text <- readLines("https://slcladal.github.io/data/testcorpus/linguistics07.txt", skipNul = T)
-fileName <- "data/peterpan.txt"
-text <- readChar(fileName, file.info(fileName)$size)
-# inspect data
-str(text)
+#We define the function to tag the text with POS tagging process using Penn Treebank tagset
 POStag <- function(object){
   # define paths to corpus files
   corpus.tmp <- object
@@ -33,17 +27,120 @@ POStag <- function(object){
     return(r2)  }  )
 }
 
+# load corpus data
+fileName <- "data/peterpan.txt"
+text <- readChar(fileName, file.info(fileName)$size)
+# inspect data
+str(text)
+
+#Proceed with POS tagging process
 textpos <- POStag(object = text)
 textpos <- textpos[[1]]
+#Split the result of tagging process to format as an array with each pair word/tag
 sp = strsplit(textpos, " +")
+#Format result as dataframe
 myDf <- as.data.frame(sp) 
+#Define an empty matrix to fill in the loop
 output <- matrix(ncol=2, nrow=nrow(myDf))
 for(i in 1:nrow(myDf)){
+  #For each word/tag pair we slit it and add it to the output matrix
   pair <- myDf[i,1]
   sp1 <- strsplit(pair, "/", fixed=TRUE)
   output[i,] <- c(sp1[[1]][1],sp1[[1]][2])
-  }  
+}  
+#We format the output as dataset and set the columns name
 output <- data.frame(output)
 colnames(output) <- c("Word", "Tag")
-output[output$Tag == 'JJ',]
+#We filter the outout to mantain only words tagged as adjectives
+output <- output[output$Tag == 'JJ',]
+output = subset(output, select = -c(Tag) )
+#We create another dataset aggreging the data to get repetitions of each word
+dfTemp<-aggregate(output$Word, output, length)
+#We order it by number of appearances and get the top 15
+countAdjectives <-dfTemp[order(-dfTemp$x),]
+countAdjectives1 <-head(countAdjectives,20)
+#Represent the result data
+barplot(height = countAdjectives1$x, names.arg = countAdjectives1$Word, main="Peter Pan most common adjectives")
 
+
+
+# load corpus data
+fileName <- "data/alice's adventures.txt"
+text <- readChar(fileName, file.info(fileName)$size)
+# inspect data
+str(text)
+
+#Proceed with POS tagging process
+textpos <- POStag(object = text)
+textpos <- textpos[[1]]
+#Split the result of tagging process to format as an array with each pair word/tag
+sp = strsplit(textpos, " +")
+#Format result as dataframe
+myDf <- as.data.frame(sp) 
+#Define an empty matrix to fill in the loop
+output <- matrix(ncol=2, nrow=nrow(myDf))
+for(i in 1:nrow(myDf)){
+  #For each word/tag pair we slit it and add it to the output matrix
+  pair <- myDf[i,1]
+  sp1 <- strsplit(pair, "/", fixed=TRUE)
+  output[i,] <- c(sp1[[1]][1],sp1[[1]][2])
+}  
+#We format the output as dataset and set the columns name
+output <- data.frame(output)
+colnames(output) <- c("Word", "Tag")
+#We filter the outout to mantain only words tagged as adjectives
+output <- output[output$Tag == 'JJ',]
+output = subset(output, select = -c(Tag) )
+#We create another dataset aggreging the data to get repetitions of each word
+dfTemp<-aggregate(output$Word, output, length)
+#We order it by number of appearances and get the top 15
+countAdjectives <-dfTemp[order(-dfTemp$x),]
+countAdjectives2 <-head(countAdjectives,20)
+#Represent the result data
+barplot(height = countAdjectives2$x, names.arg = countAdjectives2$Word, main="Alice in Wonderland most common adjectives")
+
+
+# load corpus data
+fileName <- "data/frankestein.txt"
+text <- readChar(fileName, file.info(fileName)$size)
+# inspect data
+str(text)
+
+#Proceed with POS tagging process
+textpos <- POStag(object = text)
+textpos <- textpos[[1]]
+#Split the result of tagging process to format as an array with each pair word/tag
+sp = strsplit(textpos, " +")
+#Format result as dataframe
+myDf <- as.data.frame(sp) 
+#Define an empty matrix to fill in the loop
+output <- matrix(ncol=2, nrow=nrow(myDf))
+for(i in 1:nrow(myDf)){
+  #For each word/tag pair we slit it and add it to the output matrix
+  pair <- myDf[i,1]
+  sp1 <- strsplit(pair, "/", fixed=TRUE)
+  output[i,] <- c(sp1[[1]][1],sp1[[1]][2])
+}  
+#We format the output as dataset and set the columns name
+output <- data.frame(output)
+colnames(output) <- c("Word", "Tag")
+#We filter the outout to mantain only words tagged as adjectives
+output <- output[output$Tag == 'JJ',]
+output = subset(output, select = -c(Tag) )
+#We create another dataset aggreging the data to get repetitions of each word
+dfTemp<-aggregate(output$Word, output, length)
+#We order it by number of appearances and get the top 15
+countAdjectives <-dfTemp[order(-dfTemp$x),]
+countAdjectives3 <-head(countAdjectives,20)
+#Represent the result data
+barplot(height = countAdjectives3$x, names.arg = countAdjectives3$Word, main="Frankestein most common adjectives")
+
+# merge the three dataframes
+total3 <- merge(countAdjectives1,countAdjectives2,by="Word")
+total3 <- merge(total3, countAdjectives3,by="Word")
+total3 <-total3[order(-total3$x),]
+total3
+total <- merge(countAdjectives1,countAdjectives2,by="Word", all=TRUE)
+total <- merge(total, countAdjectives3,by="Word", all=TRUE)
+total <-total[order(-total$x),]
+total
