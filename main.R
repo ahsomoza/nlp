@@ -61,6 +61,7 @@ countAdjectives <-dfTemp[order(-dfTemp$x),]
 countAdjectives1 <-head(countAdjectives,20)
 #Represent the result data
 barplot(height = countAdjectives1$x, names.arg = countAdjectives1$Word, main="Peter Pan most common adjectives")
+write.csv(countAdjectives1,"data/peterPanOutput.csv", row.names = FALSE)
 
 
 
@@ -98,6 +99,7 @@ countAdjectives <-dfTemp[order(-dfTemp$x),]
 countAdjectives2 <-head(countAdjectives,20)
 #Represent the result data
 barplot(height = countAdjectives2$x, names.arg = countAdjectives2$Word, main="Alice in Wonderland most common adjectives")
+write.csv(countAdjectives2,"data/aliceOutput.csv", row.names = FALSE)
 
 
 # load corpus data
@@ -134,13 +136,16 @@ countAdjectives <-dfTemp[order(-dfTemp$x),]
 countAdjectives3 <-head(countAdjectives,20)
 #Represent the result data
 barplot(height = countAdjectives3$x, names.arg = countAdjectives3$Word, main="Frankestein most common adjectives")
+write.csv(countAdjectives3,"data/frankesteinOutput.csv", row.names = FALSE)
 
 # merge the three dataframes
 total3 <- merge(countAdjectives1,countAdjectives2,by="Word")
 total3 <- merge(total3, countAdjectives3,by="Word")
 total3 <-total3[order(-total3$x),]
+write.csv(total3,"data/TotalOutputInner.csv", row.names = FALSE)
 total3
 total <- merge(countAdjectives1,countAdjectives2,by="Word", all=TRUE)
 total <- merge(total, countAdjectives3,by="Word", all=TRUE)
 total <-total[order(-total$x),]
+write.csv(total,"data/TotalOutputFull.csv", row.names = FALSE)
 total
